@@ -16,7 +16,7 @@ a{
 }
 
 a:hover{
-    color:darkkhaki;
+    color:darkred;
 }
 
 #welcomeHead {
@@ -31,7 +31,7 @@ a:hover{
     font-family: 'Arial', sans-serif; 
     line-height: 1.6;            
     margin: 0;                 
-    color: #333;
+    color:darkred;
     border: #333 solid .3rem;  
     border-radius: .2rem;               
 }

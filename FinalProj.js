@@ -1,7 +1,6 @@
 // so will take in port number for our hosting our applications
 
 // and the need to use "stop" to stiop our webserver
-const OpenAI = require('openai').default
 const express = require("express"); /* Accessing express module */
 const axios = require("axios")
 const app = express();
@@ -217,9 +216,6 @@ async function lookUpGPA(client, databaseAndCollection, gpa) {
     return results;
 }
 
-
-
-
 async function clearAll() {
     try {
         await client.connect();
@@ -235,18 +231,6 @@ async function clearAll() {
         await client.close();
     }
 }
-
-// app.get("/create", (request, response) => { 
-
-//     const port = portNumber
-//     response.render('Submission', {port, port});
-
-// });
-
-// QELKCESWHECVZF8PFEQ75BXJ
-// api:key: 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
-
-// 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 2nd key
 
 app.get("/create", async (request, response) => {
 
@@ -276,8 +260,6 @@ try {
 }
 
 });
-
-
 
 
 app.listen(portNumber);
