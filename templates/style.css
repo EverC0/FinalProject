@@ -1,0 +1,56 @@
+body {
+
+ font-family:sans-serif;
+ background-color:bisque;
+ 
+ /* font-size: large; */
+
+}
+h1{
+    color:brown;
+}
+
+a{
+    color:darkslategrey;
+    transition: colr .4s;
+}
+
+a:hover{
+    color:darkkhaki;
+}
+
+#welcomeHead {
+    display: flex;
+    align-items: center;         
+    justify-content: center;     
+    height: auto;                
+    text-align: center;
+    font-size: 1rem;          
+    padding: 40px 20px;          
+    background-color:blanchedalmond;   
+    font-family: 'Arial', sans-serif; 
+    line-height: 1.6;            
+    margin: 0;                 
+    color: #333;
+    border: #333 solid .3rem;  
+    border-radius: .2rem;               
+}
+
+#Image-container {
+    display: flex;               /* Establishes a flex container */
+    align-items: center;         
+    justify-content: center;    
+    height: 100%;                
+    text-align: center;         
+}
+
+#Image-container h1, #Image-container img{
+ display: inline;
+ word-spacing: .1rem;
+ 
+}
+
+#globe_img{ 
+    width: 6rem; 
+    height: 6rem; 
+} 

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Place Order</title>
+	<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+	<h1>Update value</h1>
+	<form action="http://localhost:<%= port %>/review" method="post">
+		<fieldset>
+            
+    		<Strong>Name: <input name="name"></Strong><br>
+			<Strong>Email Address: <input type="email" name="email"></Strong><br>
+			<br><Strong>  New Amount: <input type="text" name="Amo"/></label><br>
+
+			<br>
+				<legend>Describe Purchases: </legend>
+				<label><textarea rows="5" cols="50" name="orderInformation" maxlength="20"></textarea></label>
+	
+		</fieldset>
+        <br>
+        <input type="reset" />
+        <input type="submit" value="Submit Application"/>
+        <hr>
+        <a href="MainPage">HOME</a>
+    </form>
+</body>
+
+</html>

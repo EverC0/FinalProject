@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Place Order</title>
+</head>
+
+<body>
+	<h1>College Tracker Account</h1>
+    <form id="myForm" action="http://localhost:<%= port %>/application" method="post">
+		<fieldset>
+            <!-- <legend>
+                <strong>Customer Information</strong>
+            </legend> -->
+            
+			<Strong>Name: <input type="text" name="name"/></label>
+            <br>
+            <br>
+			<label>Email Address: <input type="email" name="email"></label>
+            <br>
+
+            <br><Strong>  Amount: <input type="text" name="Amo"/></label><br>
+
+            <br>
+                <legend>Describe Purchases: </legend>
+                <label><textarea rows="5" cols="50" name="orderInformation" maxlength="20"></textarea></label>
+
+
+		</fieldset>
+        <br>
+        <input type="reset" />
+        <input type="submit" value="Submit Application" id="submit"/>
+        <hr>
+        
+        <a href="/">HOME</a>
+    </form>
+    <script>
+        document.getElementById("myForm").addEventListener('submit',function(event){
+            const submitButton = document.getElementById("submit");
+            const confirmed = window.confirm("Are you sure you want to submit your application?\nYou will not be able to change your information once submitted.");
+            if (!confirmed) {
+                event.preventDefault(); // Prevent form submission if user cancels
+                console.log("User canceled the action.");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!-- DO NOT MODIFY THIS FILE -->
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Order Confirmation</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+	<h1> Check if human</h1>
+	
+    <div>
+        <img src="<%- names %>" alt="Captcha Image">
+    </div>
+
+    <input type="text" name="answer" id="checkCaptcha">
+    <input type="submit" value="Submit" id="myB">
+    <hr>
+    
+    <a href="MainPage">HOME</a>
+    
+    <script>
+        const serverValue = "<%= pass %>";
+        document.getElementById("myB").addEventListener('click',function(event){
+            let input = document.getElementById("checkCaptcha");
+            let inputValue = input.value;
+            const confirmed = window.confirm("Are you sure you want to remove all applications.");
+            if (!confirmed && inputValue != serverValue){
+                event.preventDefault();
+                console.log("User canceled the action.");
+            }
+            else{
+                window.location.href = '/application';
+            }
+        });
+    </script>
+</body>
+</html>

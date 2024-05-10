@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "../../SummerCamp"
+		},
+		{
+			"path": "../../CMSC320Project"
+		},
+		{
+			"path": "../../SummerCamp c"
+		},
+		{
+			"path": "../../Downloads/MongoDBCode"
+		},
+		{
+			"path": "../../Downloads/SummerCamp c"
+		},
+		{
+			"path": "../../Downloads/ReactCode"
+		},
+		{
+			"path": "../../Downloads/AjaxCode"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../Webpage"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "ReactCode"
+	}
+}
