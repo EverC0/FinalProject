@@ -72,9 +72,8 @@ async function insertMovie(client, databaseAndCollection, NewStu) {
 
 app.get('/application', (req, res) => {
     const port = portNumber
-    res.render('applyApp', {port, port}); // Assuming you're using a templating engine like EJS
+    res.render('applyApp', {port, port}); 
 });
-
 
 
 app.post("/application", async (request, response) => {
@@ -89,12 +88,14 @@ app.post("/application", async (request, response) => {
         await insertMovie(client, databaseAndCollection, Student);
 
     } catch (e) {
+
         console.error(e);
     } finally {
         await client.close();
     }
 
-    let answer = `<h1>Purchases Reciept</h1>`;
+    let answer = `<link rel="stylesheet" href="style.css"></link>` 
+    answer += `<h1>Account Created</h1>`;
     answer += `<Strong>Name: </Strong> ${name}<br>`;
     answer += `<Strong>Email Address: </Strong>${email} <br> `
     answer += `<Strong>Amount: </Strong> $${Amo} <br>`    
@@ -114,7 +115,7 @@ async function lookUpOneEntry(client, databaseAndCollection, emailName) {
    if (result) {
        return result
    } else {
-       console.log(`No movie found with name ${movieName}`);
+       console.log(`No email found with name ${emailName}`);
    }
 }
 
@@ -129,10 +130,9 @@ app.post("/review", async (req, res) => {
     try {
         await client.connect();
 
-        const query = { Email: email };  // Using the correct case as per your schema
+        const query = { Email: email };
         let inc = parseInt(Amo)
 
-        // Assuming 'collection' is already defined in your scope as per the environment variables
         const updateResult =  await client.db(databaseAndCollection.db)
         .collection(databaseAndCollection.collection).updateOne(query,
             [
@@ -153,7 +153,8 @@ app.post("/review", async (req, res) => {
             throw new Error("Failed to retrieve updated document.");
         }
 
-        let answer = `<h1>Applicants Data</h1>`;
+        let answer = `<link rel="stylesheet" href="style.css"></link>`
+        answer += `<h1>Applicants Data</h1>`;
         answer += `<Strong>Name: </Strong> ${s.name}<br>`;
         answer += `<Strong>Email Address: </Strong>${s.Email} <br> `
         answer += `<Strong>Amount: </Strong>${s.Amount} <br> `
@@ -178,12 +179,13 @@ app.post("/myAmount", async (req, res) => {
         let { email } = req.body;
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
-        let answer = `<h1>Current Semester Amount</h1>`;
-        answer += `<Strong>Name: </Strong> ${s.name}<br>`;
-        answer += `<Strong>Email Address: </Strong>${s.Email} <br> `
-        answer += `<Strong>Amount: </Strong>${s.Amount} <br> `
-        answer += `<Strong>Background Information: </Strong> <br> ${s.item} <br><hr>`
-        answer += `<a href="/">HOME</a>`
+        let answer = `<link rel="stylesheet" href="style.css">`;
+        answer += `<h1>Current Semester Amount</h1>`;
+        answer += `<strong>Name: </strong>${s.name}<br>`;
+        answer += `<strong>Email Address: </strong>${s.Email}<br>`;
+        answer += `<strong>Amount: </strong>${s.Amount}<br>`;
+        answer += `<strong>Background Information: </strong><br>${s.item}<br><hr>`;
+        answer += `<a href="/">HOME</a>`;
 
         if (answer.length > 0) {
             res.send(answer);
@@ -204,32 +206,6 @@ async function lookUpOneEntry(client, databaseAndCollection, emailName) {
    } else {
        return 0
    }
-}
-
-async function lookUpGPA(client, databaseAndCollection, gpa) {
-    let filter = {gpa: { $gte: gpa} };
-    const cursor = client.db(databaseAndCollection.db)
-    .collection(databaseAndCollection.collection)
-    .find(filter);
-
-    const results = await cursor.toArray();
-    return results;
-}
-
-async function clearAll() {
-    try {
-        await client.connect();
-        // console.log("***** Clearing Collection *****");
-        const result = await client.db(databaseAndCollection.db)
-        .collection(databaseAndCollection.collection)
-        .deleteMany({});
-        // console.log(`Deleted documents ${result.deletedCount}`);
-        return result.deletedCount;
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
 }
 
 app.get("/create", async (request, response) => {
