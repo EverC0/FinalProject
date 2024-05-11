@@ -8,7 +8,7 @@ const path = require("path");
 
 // const fs = require("fs");
 
-const portNumber = process.argv[2];
+const portNumber = process.argv[2] || 5001;
 
 const prompt = "Type stop to shutdown the server: ";
 console.log(`Web server started and running at http://localhost:${portNumber}/`);
