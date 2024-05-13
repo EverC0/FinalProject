@@ -71,8 +71,7 @@ async function insertMovie(client, databaseAndCollection, NewStu) {
 
 
 app.get('/application', (req, res) => {
-    const port = portNumber
-    res.render('applyApp', {port, port}); 
+    res.render('applyApp'); 
 });
 
 
@@ -120,8 +119,8 @@ async function lookUpOneEntry(client, databaseAndCollection, emailName) {
 }
 
 app.get("/review", (req, res) => {
-    const port = portNumber
-    res.render('reviewApp', {port, port});
+    // const port = portNumber
+    res.render('reviewApp');
 });
 
 app.post("/review", async (req, res) => {
@@ -169,8 +168,8 @@ app.post("/review", async (req, res) => {
 });
 
 app.get("/myAmount", (req, res) => {
-    const port = portNumber
-    res.render('CurAmount', {port, port});
+    // const port = portNumber
+    res.render('CurAmount');
 });
 
 
