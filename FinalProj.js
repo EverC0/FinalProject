@@ -8,10 +8,9 @@ const path = require("path");
 
 // const fs = require("fs");
 
-const portNumber = process.argv[2] || 5001;
+const portNumber = process.env.PORT || 5001;
 
 const prompt = "Type stop to shutdown the server: ";
-console.log(`Web server started and running at http://localhost:${portNumber}/`);
 process.stdout.write(prompt);
 
 process.stdin.setEncoding("utf8");
@@ -193,19 +192,6 @@ app.post("/myAmount", async (req, res) => {
         }
     
 });
-
-async function lookUpOneEntry(client, databaseAndCollection, emailName) {
-    let filter = {Email: emailName};
-    const result = await client.db(databaseAndCollection.db)
-                        .collection(databaseAndCollection.collection)
-                        .findOne(filter);
-
-   if (result) {
-       return result
-   } else {
-       return 0
-   }
-}
 
 app.get("/create", async (request, response) => {
 
