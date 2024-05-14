@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>Order Confirmation</title>
+	<title>New Article Confirmation</title>
     <link rel="stylesheet" href="style.css">
 
 </head>
@@ -28,7 +28,7 @@
         document.getElementById("myB").addEventListener('click',function(event){
             let input = document.getElementById("checkCaptcha");
             let inputValue = input.value;
-            const confirmed = window.confirm("Are you sure you want to remove all applications.");
+            const confirmed = window.confirm("Are you sure you want to Submit?");
             if (!confirmed && inputValue != serverValue){
                 event.preventDefault();
                 console.log("User canceled the action.");

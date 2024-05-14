@@ -63,11 +63,10 @@ app.get('/MainPage', (req, res) => {
     res.render('MainPage'); // Assuming you're rendering a template named "MainPage"
 });
 
-async function insertMovie(client, databaseAndCollection, NewStu) {
+async function insertAcc(client, databaseAndCollection, NewStu) {
     const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).insertOne(NewStu);
 
     }
-
 
 app.get('/application', (req, res) => {
     res.render('applyApp'); 
@@ -82,8 +81,8 @@ app.post("/application", async (request, response) => {
         await client.connect();
         /* Inserting one movie */
         // console.log("***** Inserting one student *****");
-        let Student = {name: name, Email: email, Amount: parseInt(Amo), item: `${orderInformation}<br>`};
-        await insertMovie(client, databaseAndCollection, Student);
+        let Student = {name: name, Email: email, Amount: parseInt(Amo), item: `${orderInformation}<br>`, URL_list:[]};
+        await insertAcc(client, databaseAndCollection, Student);
 
     } catch (e) {
 
@@ -96,8 +95,8 @@ app.post("/application", async (request, response) => {
     answer += `<h1>Account Created</h1>`;
     answer += `<Strong>Name: </Strong> ${name}<br>`;
     answer += `<Strong>Email Address: </Strong>${email} <br> `
-    answer += `<Strong>Amount: </Strong> $${Amo} <br>`    
-    answer += `<Strong>Purchase Information: </Strong> <br> ${orderInformation} <br><hr>`
+    answer += `<Strong>Age: </Strong> ${Amo} <br>`    
+    answer += `<Strong>Status Information: </Strong> <br> ${orderInformation} <br><hr>`
     answer += `<a href="/">HOME</a>`
 
     response.send(answer)
@@ -122,75 +121,71 @@ app.get("/review", (req, res) => {
     res.render('reviewApp');
 });
 
-app.post("/review", async (req, res) => {
-    const { email, Amo, orderInformation } = req.body;
+async function appendToURLList(client, databaseAndCollection, email, newURL) {
+    const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne(
+        { Email: email },
+        { $push: { URL_list: newURL } }
+    );
+    console.log(`URL appended. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`);
+}
 
-    try {
+
+app.post("/review", async (request, response) => {
+
+    let { email, URL } = request.body;
+
+    const options = {
+        method: 'GET',
+        url: 'https://extract-news.p.rapidapi.com/v0/article',
+        params: {
+          url: `${URL}`
+        },
+        headers: {
+          'X-RapidAPI-Key': process.env.MY_APIS,
+          'X-RapidAPI-Host': 'extract-news.p.rapidapi.com'
+        }
+      };
+      
+      try {
+
         await client.connect();
 
-        const query = { Email: email };
-        let inc = parseInt(Amo)
-
-        const updateResult =  await client.db(databaseAndCollection.db)
-        .collection(databaseAndCollection.collection).updateOne(query,
-            [
-                { $set: { 
-                    item: { $concat: [`$item`, `${orderInformation}`] },
-                    Amount: { $add: ["$Amount", inc] }
-                } }
-            ]
-        );
-    
-        if (updateResult.modifiedCount === 0) {
-            throw new Error("No document was updated");
-        }
-
-        // Retrieve updated data
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
-        if (!s) {
-            throw new Error("Failed to retrieve updated document.");
+
+        if(!s){
+            window.alert("Must be 18 years old to sign up")
         }
+        await appendToURLList(client, databaseAndCollection, email, URL)
 
-        let answer = `<link rel="stylesheet" href="style.css"></link>`
-        answer += `<h1>Applicants Data</h1>`;
-        answer += `<Strong>Name: </Strong> ${s.name}<br>`;
-        answer += `<Strong>Email Address: </Strong>${s.Email} <br> `
-        answer += `<Strong>Amount: </Strong>${s.Amount} <br> `
-        answer += `<Strong>Background Information: </Strong> <br> ${s.item} <br><hr>`
-        answer += `<a href="/">HOME</a>`
+        const responsed = await axios.request(options);
+        const article = responsed.data.article;
 
-        res.send(answer);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("An error occurred while processing your request.");
-    } 
-});
-
-app.get("/myAmount", (req, res) => {
-    // const port = portNumber
-    res.render('CurAmount');
-});
-
-
-app.post("/myAmount", async (req, res) => {
-        await client.connect();
-        let { email } = req.body;
-        let s = await lookUpOneEntry(client, databaseAndCollection, email);
+        // Filter the data to only include the necessary fields
+        const filteredData = {
+            authors: article.authors,
+            source_url: article.source_url,
+            published: article.published,
+            title: article.title,
+            text: article.text
+        };
 
         let answer = `<link rel="stylesheet" href="style.css">`;
-        answer += `<h1>Current Semester Amount</h1>`;
-        answer += `<strong>Name: </strong>${s.name}<br>`;
-        answer += `<strong>Email Address: </strong>${s.Email}<br>`;
-        answer += `<strong>Amount: </strong>${s.Amount}<br>`;
-        answer += `<strong>Background Information: </strong><br>${s.item}<br><hr>`;
+        answer += `<h1> Article Searched </h1>`;
+
+
+        answer += `<h2>${filteredData.title}</h2>`;
+        answer += `<p><strong>Authors:</strong> ${filteredData.authors.join(', ')}</p>`;
+        answer += `<p><strong>Source URL:</strong> <a href="${filteredData.source_url}">${filteredData.source_url}</a></p>`;
+        answer += `<p><strong>Published:</strong> ${new Date(filteredData.published).toLocaleString()}</p>`;
+        answer += `<div><strong>Text:</strong> <p>${filteredData.text.replace(/\n/g, '<br>')}</p></div>`;
         answer += `<a href="/">HOME</a>`;
 
-        if (answer.length > 0) {
-            res.send(answer);
-        } else {
-            res.status(404).send("No records found");
-        }
-    
+        response.send(answer);
+
+      } catch (error) {
+          console.error(error);
+      }
+
 });
 
 app.get("/create", async (request, response) => {
@@ -222,5 +217,42 @@ try {
 
 });
 
+app.get("/myAmount", (req, res) => {
+        // const port = portNumber
+        res.render('CurAmount');
+    });
+    
+app.post("/myAmount", async (req, res) => {
+        await client.connect();
+        let { email } = req.body;
+        let s = await lookUpOneEntry(client, databaseAndCollection, email);
+
+        let answer = `<link rel="stylesheet" href="style.css">`;
+        answer += `<h1>Account Created</h1>`;
+        answer += `<strong>Name: </strong>${s.name}<br>`;
+        answer += `<strong>Email Address: </strong>${s.Email}<br>`;
+
+        // Recurse through URL_list and print a list of URLs
+        if (s.URL_list && s.URL_list.length > 0) {
+            answer += `<strong>URLs:</strong><ul>`;
+            s.URL_list.forEach(url => {
+                answer += `<li><a href="${url}" target="_blank">${url}</a></li>`;
+            });
+            answer += `</ul>`;
+        } else {
+            answer += `<strong>URLs:</strong> No URLs found.<br>`;
+        }
+        answer += `<a href="/">HOME</a>`;
+
+        if (answer.length > 0) {
+            res.send(answer);
+        } else {
+            res.status(404).send("No records found");
+        }
+    
+});
+
 
 app.listen(portNumber);
+
+

@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<h1>College Tracker Account</h1>
+	<h1>New's Article Account</h1>
     <form id="myForm" action="/application" method="post">
 		<fieldset>
             <!-- <legend>
@@ -21,10 +21,10 @@
 			<label>Email Address: <input type="email" name="email"></label>
             <br>
 
-            <br><Strong>  Amount: <input type="text" name="Amo"/></label><br>
+            <br><Strong> Age: <input type="text" name="Amo" id="age"/></label><br>
 
             <br>
-                <legend>Describe Purchases: </legend>
+                <legend>Describe Status: </legend>
                 <label><textarea rows="5" cols="50" name="orderInformation" maxlength="20"></textarea></label>
 
 
@@ -39,10 +39,15 @@
     <script>
         document.getElementById("myForm").addEventListener('submit',function(event){
             const submitButton = document.getElementById("submit");
+            const Age = document.getElementById("age").value;
             const confirmed = window.confirm("Are you sure you want to submit your application?\nYou will not be able to change your information once submitted.");
             if (!confirmed) {
                 event.preventDefault(); // Prevent form submission if user cancels
                 console.log("User canceled the action.");
+            }
+            else if( Number(Age) < 18){
+                event.preventDefault();
+                window.alert("Must be 18 years old to sign up")
             }
         });
     </script>

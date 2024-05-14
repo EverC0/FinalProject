@@ -37,7 +37,7 @@ a:hover{
 }
 
 #Image-container {
-    display: flex;               /* Establishes a flex container */
+    display: flex;              
     align-items: center;         
     justify-content: center;    
     height: 100%;                
