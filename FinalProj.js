@@ -166,7 +166,7 @@ app.post("/review", async (request, response) => {
 
     } catch (error) {
         console.error(error);
-        response.status(500).send("An error occurred while processing the request.");
+        response.sendStatus(500).send("An error occurred while processing the request.");
     } finally {
         await client.close();
     }
@@ -208,13 +208,10 @@ app.get("/myAmount", (req, res) => {
     });
     
 app.post("/myAmount", async (req, res) => {
+
     try {
         await client.connect();
         let { email } = req.body;
-
-        if (!email) {
-            return res.status(400).send("Email is required");
-        }
 
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
@@ -222,7 +219,7 @@ app.post("/myAmount", async (req, res) => {
             return res.status(404).send("No records found");
         }
 
-        const generateHtmlResponse = (s) => {
+        
             let answer = `
                 <link rel="stylesheet" href="style.css">
                 <h1>Articles Searched</h1>
@@ -240,10 +237,8 @@ app.post("/myAmount", async (req, res) => {
             }
 
             answer += `<a href="/">HOME</a>`;
-            return answer;
-        };
 
-        res.send(generateHtmlResponse(s));
+        res.send(answer);
     } catch (error) {
         console.error("Error fetching data: ", error);
         res.status(500).send("Internal Server Error");
