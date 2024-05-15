@@ -112,7 +112,7 @@ async function lookUpOneEntry(client, databaseAndCollection, emailName) {
    if (result) {
        return result
    } else {
-       console.log(`No email found with name ${emailName}`);
+       return null
    }
 }
 
@@ -129,64 +129,52 @@ async function appendToURLList(client, databaseAndCollection, email, newURL) {
     console.log(`URL appended. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`);
 }
 
-
 app.post("/review", async (request, response) => {
-
     let { email, URL } = request.body;
 
     const options = {
-        method: 'GET',
-        url: 'https://extract-news.p.rapidapi.com/v0/article',
-        params: {
-          url: `${URL}`
-        },
-        headers: {
-          'X-RapidAPI-Key': process.env.MY_APIS,
-          'X-RapidAPI-Host': 'extract-news.p.rapidapi.com'
-        }
-      };
-      
-      try {
+      method: 'GET',
+      url: 'https://article-extractor-and-summarizer.p.rapidapi.com/summarize',
+      params: {
+        url: `${URL}`,
+        length: '3'
+      },
+      headers: {
+        'X-RapidAPI-Key': process.env.MY_APIS,
+        'X-RapidAPI-Host': 'article-extractor-and-summarizer.p.rapidapi.com'
+      }
+    };
 
+    try {
         await client.connect();
 
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
-        if(!s){
-            window.alert("Must be 18 years old to sign up")
+        if (s == null) {
+            return response.status(404).send("Account not found");
         }
-        await appendToURLList(client, databaseAndCollection, email, URL)
 
-        const responsed = await axios.request(options);
-        const article = responsed.data.article;
+        await appendToURLList(client, databaseAndCollection, email, URL);
 
-        // Filter the data to only include the necessary fields
-        const filteredData = {
-            authors: article.authors,
-            source_url: article.source_url,
-            published: article.published,
-            title: article.title,
-            text: article.text
-        };
+        // Summarize the article content
+        const summarizeResponse = await axios.request(options);
+        const summary = summarizeResponse.data.summary;
 
         let answer = `<link rel="stylesheet" href="style.css">`;
-        answer += `<h1> Article Searched </h1>`;
-
-
-        answer += `<h2>${filteredData.title}</h2>`;
-        answer += `<p><strong>Authors:</strong> ${filteredData.authors.join(', ')}</p>`;
-        answer += `<p><strong>Source URL:</strong> <a href="${filteredData.source_url}">${filteredData.source_url}</a></p>`;
-        answer += `<p><strong>Published:</strong> ${new Date(filteredData.published).toLocaleString()}</p>`;
-        answer += `<div><strong>Text:</strong> <p>${filteredData.text.replace(/\n/g, '<br>')}</p></div>`;
+        answer += `<h1>Article Searched</h1>`;
+        answer += `<div><strong>Summary:</strong> <p>${summary}</p></div>`;
         answer += `<a href="/">HOME</a>`;
 
         response.send(answer);
 
-      } catch (error) {
-          console.error(error);
-      }
-
+    } catch (error) {
+        console.error(error);
+        response.status(500).send("An error occurred while processing the request.");
+    } finally {
+        await client.close();
+    }
 });
+
 
 app.get("/create", async (request, response) => {
 
@@ -228,7 +216,7 @@ app.post("/myAmount", async (req, res) => {
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
         let answer = `<link rel="stylesheet" href="style.css">`;
-        answer += `<h1>Account Created</h1>`;
+        answer += `<h1>Articles Searched</h1>`;
         answer += `<strong>Name: </strong>${s.name}<br>`;
         answer += `<strong>Email Address: </strong>${s.Email}<br>`;
 
