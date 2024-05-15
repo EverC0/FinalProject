@@ -6,7 +6,7 @@ const path = require("path");
 
 // const fs = require("fs");
 
-const portNumber = process.env.PORT || 5001;
+const portNumber = process.argv[2] || 5001;
 
 const prompt = "Type stop to shutdown the server: ";
 process.stdout.write(prompt);
@@ -148,7 +148,7 @@ app.post("/review", async (request, response) => {
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
         if (s == null) {
-            return response.status(404).send("Account not found");
+            return response.status(404).send("Account not found `<a href="/">HOME</a>` ");
         }
 
         await appendToURLList(client, databaseAndCollection, email, URL);
