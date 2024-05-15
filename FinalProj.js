@@ -208,33 +208,48 @@ app.get("/myAmount", (req, res) => {
     });
     
 app.post("/myAmount", async (req, res) => {
+    try {
         await client.connect();
         let { email } = req.body;
+
+        if (!email) {
+            return res.status(400).send("Email is required");
+        }
+
         let s = await lookUpOneEntry(client, databaseAndCollection, email);
 
-        let answer = `<link rel="stylesheet" href="style.css">`;
-        answer += `<h1>Articles Searched</h1>`;
-        answer += `<strong>Name: </strong>${s.name}<br>`;
-        answer += `<strong>Email Address: </strong>${s.Email}<br>`;
-
-        // Recurse through URL_list and print a list of URLs
-        if (s.URL_list && s.URL_list.length > 0) {
-            answer += `<strong>URLs:</strong><ul>`;
-            s.URL_list.forEach(url => {
-                answer += `<li><a href="${url}" target="_blank">${url}</a></li>`;
-            });
-            answer += `</ul>`;
-        } else {
-            answer += `<strong>URLs:</strong> No URLs found.<br>`;
+        if (!s) {
+            return res.status(404).send("No records found");
         }
-        answer += `<a href="/">HOME</a>`;
 
-        if (answer.length > 0) {
-            res.send(answer);
-        } else {
-            res.status(404).send("No records found");
-        }
-    
+        const generateHtmlResponse = (s) => {
+            let answer = `
+                <link rel="stylesheet" href="style.css">
+                <h1>Articles Searched</h1>
+                <strong>Name: </strong>${s.name}<br>
+                <strong>Email Address: </strong>${s.Email}<br>`;
+
+            if (s.URL_list && s.URL_list.length > 0) {
+                answer += `<strong>URLs:</strong><ul>`;
+                s.URL_list.forEach(url => {
+                    answer += `<li><a href="${url}" target="_blank">${url}</a></li>`;
+                });
+                answer += `</ul>`;
+            } else {
+                answer += `<strong>URLs:</strong> No URLs found.<br>`;
+            }
+
+            answer += `<a href="/">HOME</a>`;
+            return answer;
+        };
+
+        res.send(generateHtmlResponse(s));
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        res.status(500).send("Internal Server Error");
+    } finally {
+        await client.close();
+    }
 });
 
 
