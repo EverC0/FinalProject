@@ -1,5 +1,3 @@
-// so will take in port number for our hosting our applications
-
 // and the need to use "stop" to stiop our webserver
 const express = require("express"); /* Accessing express module */
 const axios = require("axios")
@@ -79,7 +77,6 @@ app.post("/application", async (request, response) => {
 
     try {
         await client.connect();
-        /* Inserting one movie */
         // console.log("***** Inserting one student *****");
         let Student = {name: name, Email: email, Amount: parseInt(Amo), item: `${orderInformation}<br>`, URL_list:[]};
         await insertAcc(client, databaseAndCollection, Student);
