@@ -219,7 +219,6 @@ app.post("/myAmount", async (req, res) => {
             return res.status(404).send("No records found");
         }
 
-        
             let answer = `
                 <link rel="stylesheet" href="style.css">
                 <h1>Articles Searched</h1>
